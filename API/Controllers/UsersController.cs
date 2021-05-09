@@ -34,8 +34,8 @@ namespace API.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetUsers(string username)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(username);
-            return _mapper.Map<MemberDto>(user);
+            var user = await _userRepository.GetMemberAsync(username);
+            return Ok(user);
         }
     }
 }
