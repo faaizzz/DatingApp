@@ -22,11 +22,11 @@ namespace DatingApp.Tests.Controller
         }
 
         [Fact]
-        public async Task GetAll_ReturnsExpectedResponse()
+        public async Task GetAll_ReturnsWeatherForecastList()
         {
-            var response = await _client.GetAsync("");
-
             var result  = await _client.GetFromJsonAsync<WeatherForecast[]>("");
+            Assert.NotNull(result);
+            Assert.Equal(5, result.Count());
         }
     }
 }
