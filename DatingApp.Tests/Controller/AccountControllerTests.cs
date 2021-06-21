@@ -23,11 +23,12 @@ namespace DatingApp.Tests.Controller
             _client = factory.CreateClient();
         }
 
-        [Fact]
-        public async Task Verify_Valid_LoginTest()
+        [Theory]
+        [Trait("User", "Login_Successful")]
+        [InlineData("testuser", "Test@123")]
+        public async Task Verify_Valid_LoginTest(string userName, string password)
         {
-            var userName = "testuser";
-            LoginDto loginDto = new LoginDto {Username = userName, Password= "Test@123" };
+            LoginDto loginDto = new LoginDto {Username = userName, Password= password };
 
             var response = await _client.PostAsJsonAsync("",loginDto);
             var returnValue = await response.Content.ReadFromJsonAsync<UserDto>();
@@ -36,21 +37,25 @@ namespace DatingApp.Tests.Controller
             //Assert.Equal(5, result.Count());
         }
 
-        [Fact]
-        public async Task Verify_InValid_User_LoginTest()
+        [Theory]
+        [Trait("User", "Login_Successful")]
+        [InlineData("testuserinvalid", "Test@123")]
+        [InlineData("testuserinvalid2", "Test@123")]
+        public async Task Verify_InValid_User_LoginTest(string userName, string password)
         {
-            var userName = "testuserinvalid";
-            LoginDto loginDto = new LoginDto { Username = userName, Password = "Test@123" };
+            LoginDto loginDto = new LoginDto { Username = userName, Password = password };
 
             var response = await _client.PostAsJsonAsync("", loginDto);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
-        [Fact]
-        public async Task Verify_InValid_Password_LoginTest()
+        [Theory]
+        [Trait("User", "Login_Successful")]
+        [InlineData("testuser", "Test@1234")]
+        [InlineData("testuser", "Test@12345")]
+        public async Task Verify_InValid_Password_LoginTest(string userName, string password)
         {
-            var userName = "testuser";
-            LoginDto loginDto = new LoginDto { Username = userName, Password = "Test@1234" };
+            LoginDto loginDto = new LoginDto { Username = userName, Password = password  };
 
             var response = await _client.PostAsJsonAsync("", loginDto);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
