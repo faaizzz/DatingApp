@@ -2,6 +2,7 @@
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -38,7 +39,7 @@ namespace DatingApp.Tests.Controller
         }
 
         [Theory]
-        [Trait("User", "Login_Successful")]
+        [Trait("User", "Login_Failed")]
         [InlineData("testuserinvalid", "Test@123")]
         [InlineData("testuserinvalid2", "Test@123")]
         public async Task Verify_InValid_User_LoginTest(string userName, string password)
@@ -50,9 +51,8 @@ namespace DatingApp.Tests.Controller
         }
 
         [Theory]
-        [Trait("User", "Login_Successful")]
-        [InlineData("testuser", "Test@1234")]
-        [InlineData("testuser", "Test@12345")]
+        [Trait("User", "Login_Failed")]
+        [ClassData(typeof(TestUserDataGenerator))]
         public async Task Verify_InValid_Password_LoginTest(string userName, string password)
         {
             LoginDto loginDto = new LoginDto { Username = userName, Password = password  };
@@ -60,5 +60,19 @@ namespace DatingApp.Tests.Controller
             var response = await _client.PostAsJsonAsync("", loginDto);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+
+        public class TestUserDataGenerator : IEnumerable<object[]>
+        {
+            private readonly List<object[]> _data = new List<object[]>
+            {
+                new object[] {"testuser","Test@1234"},
+                new object[] {"testuser","Test@12345"}
+            };
+
+            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
     }
 }
